@@ -1,4 +1,5 @@
 from typing import List
+from app.commons.enums import RoleEnum
 from pydantic import BaseModel, EmailStr, constr
 
 PHONE_REGEX = "^[+]*[(]{0,1}[0-9]{1,4}[)]{0,1}[-\s\./0-9]*$"
@@ -34,6 +35,7 @@ class CandidateCreate(UserCreate):
     fullname: str
     soft_skills: List[str]
     tech_skills: List[str]
+    role_id: int = RoleEnum.CANDIDATE.value
 
 
 class Candidate(UserBase):

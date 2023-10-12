@@ -13,7 +13,6 @@ router = APIRouter(
 def initialize(user_service: UserService):
     @router.post("/candidate")
     async def create_candidate(candidate: CandidateCreate) -> User:
-        user = await user_service.create_candidate(candidate)
-        return user
+        return await user_service.create_candidate(candidate)
 
     return {"create_candidate": create_candidate}
