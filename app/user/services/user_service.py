@@ -1,13 +1,17 @@
 import json
+from typing import TYPE_CHECKING
 from app.user.helpers.user_helper import UserHelper
 from app.database.schemas import User, CandidateCreate
-from app.user.repositories.user_repository import UserRepository
-from app.commons.gcp import publisher, CANDIDATE_CREATION_TOPIC_PATH
+from app.commons.gcp import get_publisher, get_candidate_creation_topic_path
+
+if TYPE_CHECKING:
+    from app.user.repositories.user_repository import UserRepository
 
 
 class UserService:
-    def __init__(self, user_repository: UserRepository):
+    def __init__(self, user_repository: "UserRepository"):
         self.user_repository = user_repository
+        self.publisher = get_publisher()
 
     async def create_candidate(self, new_user: CandidateCreate) -> User:
         new_user.password = UserHelper.hash_password(new_user.password)
@@ -29,8 +33,8 @@ class UserService:
 
         new_candidate_message = json.dumps(new_candidate_data).encode("utf-8")
 
-        message_future = publisher.publish(
-            CANDIDATE_CREATION_TOPIC_PATH, new_candidate_message
+        message_future = self.publisher.publish(
+            get_candidate_creation_topic_path(self.publisher), new_candidate_message
         )
         message_future.result()
 

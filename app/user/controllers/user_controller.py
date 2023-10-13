@@ -1,7 +1,10 @@
 from fastapi import APIRouter
-
+from typing import TYPE_CHECKING
 from app.database.schemas import User, CandidateCreate
-from app.user.services.user_service import UserService
+
+if TYPE_CHECKING:
+    from app.user.services.user_service import UserService
+
 
 router = APIRouter(
     prefix="/user",
@@ -10,7 +13,7 @@ router = APIRouter(
 )
 
 
-def initialize(user_service: UserService):
+def initialize(user_service: "UserService"):
     @router.post("/candidate")
     async def create_candidate(candidate: CandidateCreate) -> User:
         return await user_service.create_candidate(candidate)
