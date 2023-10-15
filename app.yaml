@@ -2,7 +2,7 @@ runtime: python311
 
 service: rocaleda-fp-ms-users
 
-entrypoint: gunicorn -w 1 -k uvicorn.workers.UvicornWorker main:app
+entrypoint: gunicorn -w 4 -k uvicorn.workers.UvicornWorker main:app
 
 instance_class: F2
 
