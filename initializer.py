@@ -1,3 +1,4 @@
+import os
 from fastapi import FastAPI
 
 from app.database import models, database
@@ -33,6 +34,9 @@ class Initializer:
         print("User module initialization finished")
 
     def init_database(self):
-        print("Initializing database module")
-        models.Base.metadata.create_all(bind=database.engine)
-        print("Database initialization finished")
+        if os.getenv("ENV", "PROD") == "DEV":
+            print("Initializing database module")
+            models.Base.metadata.create_all(bind=database.engine)
+            print("Database initialization finished")
+            return
+        print("Skipping DB initialization")
