@@ -8,8 +8,8 @@ instance_class: F2
 
 readiness_check:
     path: "/health"  
-    check_interval_sec: 60  
-    timeout_sec: 60  
+    check_interval_sec: 300
+    timeout_sec: 300  
     failure_threshold: 5
 
 env_variables:
