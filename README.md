@@ -1,4 +1,4 @@
-# Plantilla de microservicio
+# Microservicio de usuarios
 
 
 ## Cómo ejecutar
@@ -15,6 +15,16 @@ También es posible ejecutar el proyecto sin hacer uso de contenedores, para est
 
 ## Cómo usar
 1. El componente se encontrará en el puerto 8000 de la máquina host
+
+## Cómo poblar las bases de datos
+Este proyecto hace uso de una base de datos PostgreSQL y el ORM SQLAlchemy. Adicionalmente, se hace uso de la herramienta alembic para la creación y ejecución de seeders de la base de datos.
+
+Para hacer uso de la alembic es necesario modificar la propiedad `sqlalchemy.url` encontrada en el archivo `alembic.ini` que se encuentra en la raíz del proyecto para que apunte a la base de datos deseada.
+
+A continuación se listan los comandos para crear y ejecutar una nueva migración:
+
+1. Para crear una migración: `alembic revision -m "Populate Role table"`
+2. Para ejecutar las migraciones pendientes: `alembic upgrade head`
 
 #### Ejecutando peticiones
 1. Las peticiones deben realizarse al host `http://localhost:8000`
