@@ -11,3 +11,9 @@ class UserRepository:
             db.refresh(db_user)
 
         return db_user
+
+    async def get_by_email(self, email: str) -> models.User:
+        with database.create_session() as db:
+            found_user = db.query(models.User).filter_by(email=email).first()
+
+        return found_user
