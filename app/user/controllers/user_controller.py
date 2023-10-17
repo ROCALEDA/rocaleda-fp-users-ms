@@ -18,7 +18,7 @@ def initialize(user_service: "UserService"):
     async def create_candidate(candidate: CandidateCreate) -> User:
         return await user_service.create_candidate(candidate)
 
-    @router.post("/candidate")
+    @router.post("/customer")
     async def create_customer(customer: CustomerCreate) -> User:
         return await user_service.create_customer(customer)
 
