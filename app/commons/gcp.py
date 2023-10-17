@@ -32,3 +32,9 @@ def get_candidate_creation_topic_path(publisher: pubsub_v1.PublisherClient):
     return publisher.topic_path(
         os.environ["GOOGLE_CLOUD_PROJECT"], CANDIDATE_CREATION_TOPIC
     )
+
+def get_customer_creation_topic_path(publisher: pubsub_v1.PublisherClient):
+    CUSTOMER_CREATION_TOPIC = os.environ["CUSTOMER_CREATION_TOPIC"]
+    return publisher.topic_path(
+        os.environ["GOOGLE_CLOUD_PROJECT"], CUSTOMER_CREATION_TOPIC
+    )
