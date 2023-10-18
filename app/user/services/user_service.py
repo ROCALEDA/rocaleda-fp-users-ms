@@ -20,6 +20,11 @@ class UserService:
         self.publisher = get_publisher()
 
     async def create_candidate(self, new_user: CandidateCreate) -> User:
+        existing_user = await self.user_repository.get_by_email(new_user.email)
+
+        if existing_user is not None:
+            raise HTTPException(400, "Email already in use")
+
         new_user.password = UserHelper.hash_password(new_user.password)
         saved_user = await self.user_repository.create_user(
             {
