@@ -1,6 +1,7 @@
 import json
 import pytest
 import bcrypt
+from fastapi import HTTPException
 from unittest.mock import Mock, AsyncMock, patch, ANY
 from app.database.schemas import CandidateCreate, CustomerCreate, UserCredentials
 from app.user.services.user_service import UserService
@@ -21,6 +22,8 @@ class TestUserService:
 
         mocked_repository = Mock()
         mocked_repository.create_user = AsyncMock()
+        mocked_repository.get_by_email = AsyncMock()
+        mocked_repository.get_by_email.return_value = None
 
         mocked_user = Mock(
             id=1, email="test@example.com", phone="+1234567890", role_id=3
@@ -63,6 +66,37 @@ class TestUserService:
                 }
             ).encode("utf-8"),
         )
+
+    @pytest.mark.asyncio
+    @patch("app.user.services.user_service.get_publisher")
+    @patch("app.user.services.user_service.get_candidate_creation_topic_path")
+    async def test_create_candidate_with_existing_email(
+        self, mock_get_candidate_creation_topic_path, mock_get_publisher
+    ):
+        mock_get_candidate_creation_topic_path.return_value = Mock()
+
+        mock_publisher = Mock()
+        mock_publisher.publish = Mock()
+        mock_get_publisher.return_value = mock_publisher
+
+        mocked_repository = Mock()
+        mocked_repository.get_by_email = AsyncMock()
+        mocked_repository.get_by_email.return_value = {"id": 1}
+
+        user_service = UserService(mocked_repository)
+
+        candidate_data = {
+            "email": "test@example.com",
+            "phone": "+1234567890",
+            "password": "password123",
+            "fullname": "John Doe",
+            "soft_skills": ["Communication"],
+            "tech_skills": ["Python"],
+        }
+        candidate = CandidateCreate(**candidate_data)
+
+        with pytest.raises(HTTPException):
+            await user_service.create_candidate(candidate)
 
     @pytest.mark.asyncio
     @patch("app.user.services.user_service.get_publisher")
