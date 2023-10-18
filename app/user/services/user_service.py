@@ -1,7 +1,9 @@
 import json
 from typing import TYPE_CHECKING
+
+from fastapi import HTTPException
 from app.user.helpers.user_helper import UserHelper
-from app.database.schemas import User, CandidateCreate, CustomerCreate
+from app.database.schemas import User, CandidateCreate, CustomerCreate, UserCredentials
 from app.commons.gcp import (
     get_publisher,
     get_candidate_creation_topic_path,
@@ -68,3 +70,18 @@ class UserService:
         message_future.result()
 
         return User.model_validate(saved_user)
+
+    async def get_by_credentials(self, credentials: UserCredentials) -> User:
+        user = await self.user_repository.get_by_email(credentials.email)
+
+        if user is None:
+            raise HTTPException(400, "Invalid credentials")
+
+        is_password_correct = UserHelper.verify_password(
+            credentials.password, user.password
+        )
+
+        if not is_password_correct:
+            raise HTTPException(400, "Invalid credentials")
+
+        return User.model_validate(user)
