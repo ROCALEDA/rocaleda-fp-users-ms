@@ -51,3 +51,8 @@ class CustomerCreate(UserCreate):
 
 class Customer(UserBase):
     name: str
+
+
+class UserCredentials(BaseModel):
+    email: EmailStr
+    password: str

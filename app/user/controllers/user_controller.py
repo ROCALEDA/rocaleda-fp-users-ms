@@ -1,6 +1,6 @@
-from fastapi import APIRouter
+from fastapi import APIRouter, Depends
 from typing import TYPE_CHECKING
-from app.database.schemas import User, CandidateCreate, CustomerCreate
+from app.database.schemas import User, CandidateCreate, CustomerCreate, UserCredentials
 
 if TYPE_CHECKING:
     from app.user.services.user_service import UserService
@@ -22,4 +22,12 @@ def initialize(user_service: "UserService"):
     async def create_customer(customer: CustomerCreate) -> User:
         return await user_service.create_customer(customer)
 
-    return {"create_candidate": create_candidate, "create_customer": create_customer}
+    @router.get("/by-credentials")
+    async def get_by_credentials(query: UserCredentials = Depends()) -> User:
+        return await user_service.get_by_credentials(query)
+
+    return {
+        "create_candidate": create_candidate,
+        "create_customer": create_customer,
+        "get_by_credentials": get_by_credentials,
+    }
