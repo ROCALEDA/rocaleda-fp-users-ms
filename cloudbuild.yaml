@@ -6,8 +6,10 @@ steps:
       - |
         sed -i "s|VAR_DB_URL|$_DB_URL|g" app.yaml
         sed -i "s|VAR_CANDIDATE_CREATION_TOPIC|$_CANDIDATE_CREATION_TOPIC|g" app.yaml
-        sed -i "s|VAR_PROJECT_ID|$_GOOGLE_CLOUD_PROJECT|g" app.yaml
+        sed -i "s|VAR_CUSTOMER_CREATION_TOPIC|$_CUSTOMER_CREATION_TOPIC|g" app.yaml
+        sed -i "s|VAR_PROJECT_ID|$PROJECT_ID|g" app.yaml
         sed -i "s|VAR_REGION|$LOCATION|g" app.yaml
         sed -i "s|VAR_VPC_CONNECTOR|$_VPC_CONNECTOR_NAME|g" app.yaml
         gcloud app deploy
 timeout: "1600s"
+ 

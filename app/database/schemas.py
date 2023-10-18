@@ -42,3 +42,17 @@ class Candidate(UserBase):
     fullname: str
     soft_skills: List[str]
     tech_skills: List[str]
+
+
+class CustomerCreate(UserCreate):
+    name: str
+    role_id: int = RoleEnum.CUSTOMER.value
+
+
+class Customer(UserBase):
+    name: str
+
+
+class UserCredentials(BaseModel):
+    email: EmailStr
+    password: str
