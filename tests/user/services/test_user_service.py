@@ -112,6 +112,8 @@ class TestUserService:
 
         mocked_repository = Mock()
         mocked_repository.create_user = AsyncMock()
+        mocked_repository.get_by_email = AsyncMock()
+        mocked_repository.get_by_email.return_value = None
 
         mocked_user = Mock(
             id=2, email="test2@example.com", phone="+12345678901", role_id=2
@@ -121,8 +123,8 @@ class TestUserService:
         user_service = UserService(mocked_repository)
 
         customer_data = {
-            "email": "test@example.com",
-            "phone": "+1234567890",
+            "email": "test2@example.com",
+            "phone": "+12345678901",
             "password": "password123",
             "name": "John Doe",
         }
@@ -150,6 +152,35 @@ class TestUserService:
                 }
             ).encode("utf-8"),
         )
+
+    @pytest.mark.asyncio
+    @patch("app.user.services.user_service.get_publisher")
+    @patch("app.user.services.user_service.get_customer_creation_topic_path")
+    async def test_create_customer_with_existing_email(
+        self, mock_get_customer_creation_topic_path, mock_get_publisher
+    ):
+        mock_get_customer_creation_topic_path.return_value = Mock()
+
+        mock_publisher = Mock()
+        mock_publisher.publish = Mock()
+        mock_get_publisher.return_value = mock_publisher
+
+        mocked_repository = Mock()
+        mocked_repository.get_by_email = AsyncMock()
+        mocked_repository.get_by_email.return_value = {"id": 1}
+
+        user_service = UserService(mocked_repository)
+
+        customer_data = {
+            "email": "test2@example.com",
+            "phone": "+12345678902",
+            "password": "password123",
+            "name": "Joahnna Doe",
+        }
+        customer = CustomerCreate(**customer_data)
+
+        with pytest.raises(HTTPException):
+            await user_service.create_candidate(customer)
 
     @pytest.mark.asyncio
     @patch("app.user.services.user_service.get_publisher")
