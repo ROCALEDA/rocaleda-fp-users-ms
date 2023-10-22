@@ -52,6 +52,11 @@ class UserService:
         return User.model_validate(saved_user)
 
     async def create_customer(self, new_user: CustomerCreate) -> User:
+        existing_user = await self.user_repository.get_by_email(new_user.email)
+
+        if existing_user is not None:
+            raise HTTPException(400, "Email already in use")
+
         new_user.password = UserHelper.hash_password(new_user.password)
         saved_user = await self.user_repository.create_user(
             {
